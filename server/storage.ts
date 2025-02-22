@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 export interface IStorage {
   getTodayMetrics(): Promise<Metric>;
   getLastWeekMetrics(): Promise<Metric>;
+  insertMetrics(data: InsertMetric): Promise<Metric>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -59,6 +60,18 @@ export class DatabaseStorage implements IStorage {
 
       return created;
     }
+
+    return metric;
+  }
+
+  async insertMetrics(data: InsertMetric): Promise<Metric> {
+    const [metric] = await db
+      .insert(metrics)
+      .values({
+        ...data,
+        date: startOfDay(new Date(data.date)), // Ensure date is normalized to start of day
+      })
+      .returning();
 
     return metric;
   }
