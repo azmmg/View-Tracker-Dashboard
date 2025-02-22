@@ -10,7 +10,10 @@ export const metrics = pgTable("metrics", {
   visitors: integer("visitors").notNull(),
 });
 
-export const insertMetricSchema = createInsertSchema(metrics).pick({
+// Update schema to handle ISO date strings
+export const insertMetricSchema = createInsertSchema(metrics, {
+  date: z.string().transform((str) => new Date(str)),
+}).pick({
   date: true,
   views: true,
   visits: true,
