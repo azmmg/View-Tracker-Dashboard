@@ -12,11 +12,12 @@ interface MetricsResponse {
 
 // Example function to insert metrics
 async function insertMetric() {
+  const now = new Date();
   const data = {
-    date: new Date().toISOString(),
-    views: 1500,
-    visits: 800,
-    visitors: 600
+    date: now.toISOString(), // Send as ISO string for proper timestamp parsing
+    views: Math.floor(Math.random() * 1000) + 500, // Ensure integer
+    visits: Math.floor(Math.random() * 800) + 400, // Ensure integer
+    visitors: Math.floor(Math.random() * 600) + 300 // Ensure integer
   };
 
   const response = await apiRequest("POST", "/api/metrics", data);
