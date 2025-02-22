@@ -14,10 +14,10 @@ interface MetricsResponse {
 async function insertMetric() {
   const now = new Date();
   const data = {
-    date: now.toISOString(), // Send as ISO string for proper timestamp parsing
-    views: Math.floor(Math.random() * 1000) + 500, // Ensure integer
-    visits: Math.floor(Math.random() * 800) + 400, // Ensure integer
-    visitors: Math.floor(Math.random() * 600) + 300 // Ensure integer
+    date: now.toISOString(),
+    views: Math.floor(Math.random() * 1000) + 500,
+    visits: Math.floor(Math.random() * 800) + 400,
+    visitors: Math.floor(Math.random() * 600) + 300
   };
 
   const response = await apiRequest("POST", "/api/metrics", data);
@@ -35,7 +35,6 @@ export default function Dashboard() {
     queryKey: ["/api/metrics"],
   });
 
-  // Add mutation for inserting metrics
   const mutation = useMutation({
     mutationFn: insertMetric,
     onSuccess: () => {
@@ -43,7 +42,7 @@ export default function Dashboard() {
         title: "Success",
         description: "New metrics have been added",
       });
-      refetch(); // Refresh the metrics data
+      refetch();
     },
     onError: (error) => {
       toast({
@@ -67,6 +66,9 @@ export default function Dashboard() {
             data?.today.views ?? 0,
             data?.lastWeek.views ?? 0
           )}
+          metric="views"
+          today={data?.today ?? { id: 0, date: new Date(), views: 0, visits: 0, visitors: 0 }}
+          lastWeek={data?.lastWeek ?? { id: 0, date: new Date(), views: 0, visits: 0, visitors: 0 }}
           isLoading={isLoading}
         />
 
@@ -78,6 +80,9 @@ export default function Dashboard() {
             data?.today.visits ?? 0,
             data?.lastWeek.visits ?? 0
           )}
+          metric="visits"
+          today={data?.today ?? { id: 0, date: new Date(), views: 0, visits: 0, visitors: 0 }}
+          lastWeek={data?.lastWeek ?? { id: 0, date: new Date(), views: 0, visits: 0, visitors: 0 }}
           isLoading={isLoading}
         />
 
@@ -89,6 +94,9 @@ export default function Dashboard() {
             data?.today.visitors ?? 0,
             data?.lastWeek.visitors ?? 0
           )}
+          metric="visitors"
+          today={data?.today ?? { id: 0, date: new Date(), views: 0, visits: 0, visitors: 0 }}
+          lastWeek={data?.lastWeek ?? { id: 0, date: new Date(), views: 0, visits: 0, visitors: 0 }}
           isLoading={isLoading}
         />
       </div>

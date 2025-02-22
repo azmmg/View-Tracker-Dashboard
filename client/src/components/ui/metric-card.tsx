@@ -3,19 +3,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { TrendingDown, TrendingUp, HelpCircle } from "lucide-react";
+import type { Metric } from "@shared/schema";
+import { MetricComparison } from "./metric-comparison";
 
 interface MetricCardProps {
   title: string;
   icon: React.ReactNode;
   value: number;
   change: number;
+  metric: 'views' | 'visits' | 'visitors';
+  today: Metric;
+  lastWeek: Metric;
   isLoading?: boolean;
 }
 
 function getPerformanceColor(change: number): string {
-  if (change >= 10) return "text-emerald-500"; // Good performance
-  if (change >= 0) return "text-amber-500";    // Neutral performance
-  return "text-red-500";                       // Poor performance
+  if (change >= 10) return "text-emerald-500";
+  if (change >= 0) return "text-amber-500";
+  return "text-red-500";
 }
 
 function getPerformanceLabel(change: number): string {
@@ -24,7 +29,16 @@ function getPerformanceLabel(change: number): string {
   return "Needs attention";
 }
 
-export function MetricCard({ title, icon, value, change, isLoading }: MetricCardProps) {
+export function MetricCard({ 
+  title, 
+  icon, 
+  value, 
+  change, 
+  metric,
+  today,
+  lastWeek,
+  isLoading 
+}: MetricCardProps) {
   const isPositive = change >= 0;
   const performanceColor = getPerformanceColor(change);
   const performanceLabel = getPerformanceLabel(change);
@@ -56,7 +70,15 @@ export function MetricCard({ title, icon, value, change, isLoading }: MetricCard
     )}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
+        <div className="flex items-center space-x-2">
+          <MetricComparison
+            metric={metric}
+            today={today}
+            lastWeek={lastWeek}
+            title={title}
+          />
+          {icon}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value.toLocaleString()}</div>
