@@ -1,7 +1,7 @@
 import { metrics, type Metric, type InsertMetric } from "@shared/schema";
 import { db } from "./db";
 import { addDays, startOfDay, subDays } from "date-fns";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   getTodayMetrics(): Promise<Metric>;
@@ -15,7 +15,9 @@ export class DatabaseStorage implements IStorage {
     const [metric] = await db
       .select()
       .from(metrics)
-      .where(eq(metrics.date, today));
+      .where(eq(metrics.date, today))
+      .orderBy(desc(metrics.id))
+      .limit(1);
 
     if (!metric) {
       // If no metrics exist for today, create them
@@ -42,7 +44,9 @@ export class DatabaseStorage implements IStorage {
     const [metric] = await db
       .select()
       .from(metrics)
-      .where(eq(metrics.date, lastWeek));
+      .where(eq(metrics.date, lastWeek))
+      .orderBy(desc(metrics.id))
+      .limit(1);
 
     if (!metric) {
       // If no metrics exist for last week, create them
