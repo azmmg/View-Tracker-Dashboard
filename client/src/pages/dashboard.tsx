@@ -3,6 +3,7 @@ import { Eye, Users, UserCheck } from "lucide-react";
 import { MetricCard } from "@/components/ui/metric-card";
 import type { Metric } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface MetricsResponse {
   today: Metric;
@@ -18,7 +19,8 @@ async function insertMetric() {
     visitors: 600
   };
 
-  await apiRequest("POST", "/api/metrics", data);
+  const response = await apiRequest("POST", "/api/metrics", data);
+  return response.json();
 }
 
 function calculatePercentChange(current: number, previous: number): number {
@@ -27,13 +29,28 @@ function calculatePercentChange(current: number, previous: number): number {
 }
 
 export default function Dashboard() {
-  const { data, isLoading } = useQuery<MetricsResponse>({
+  const { toast } = useToast();
+  const { data, isLoading, refetch } = useQuery<MetricsResponse>({
     queryKey: ["/api/metrics"],
   });
 
   // Add mutation for inserting metrics
   const mutation = useMutation({
     mutationFn: insertMetric,
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "New metrics have been added",
+      });
+      refetch(); // Refresh the metrics data
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add metrics",
+        variant: "destructive",
+      });
+    },
   });
 
   return (
@@ -75,12 +92,12 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Add a button to test metric insertion */}
       <button 
         onClick={() => mutation.mutate()}
-        className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+        disabled={mutation.isPending}
+        className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Insert Sample Metrics
+        {mutation.isPending ? "Adding..." : "Insert Sample Metrics"}
       </button>
     </div>
   );
