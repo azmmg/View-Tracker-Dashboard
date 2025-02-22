@@ -14,8 +14,8 @@ import type { Metric } from "@shared/schema";
 
 interface MetricComparisonProps {
   metric: 'views' | 'visits' | 'visitors';
-  today: Metric;
-  lastWeek: Metric;
+  today: Metric | null | undefined;
+  lastWeek: Metric | null | undefined;
   title: string;
 }
 
@@ -31,8 +31,8 @@ function getPerformanceColor(change: number): string {
 }
 
 export function MetricComparison({ metric, today, lastWeek, title }: MetricComparisonProps) {
-  const currentValue = today[metric];
-  const previousValue = lastWeek[metric];
+  const currentValue = today?.[metric] ?? 0;
+  const previousValue = lastWeek?.[metric] ?? 0;
   const percentChange = calculatePercentChange(currentValue, previousValue);
   const isPositive = percentChange >= 0;
   const performanceColor = getPerformanceColor(percentChange);
