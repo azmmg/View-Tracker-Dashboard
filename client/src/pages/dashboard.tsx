@@ -55,8 +55,8 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8">Analytics Dashboard</h1>
-
+      <h1 className="text-3xl font-bold mb-8">Analytics Dashboard (React)</h1>
+      <p>The entire dashboard was built by the AI assistant of Repl.it</p>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <MetricCard
           title="Views"
